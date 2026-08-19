@@ -1,4 +1,4 @@
-"""Utility functions for Project 02 - World Cup 2030 prediction.
+"""Utility functions for Project 02 - World Cup 2026 prediction.
 
 This module contains the "plumbing" code of the project: useful, but not
 essential to understand the machine learning workflow. It lives here to
@@ -32,14 +32,16 @@ ROUND_NAMES = [
 
 
 def load_results(path="data/results.csv"):
-    """Load the international results dataset and parse dates.
+    """
+    Description:
+        Load the international results dataset and parse dates.
 
     Arguments:
-    path -- location of the results.csv file
+        path: location of the results.csv file
 
     Returns:
-    df -- DataFrame with one row per international match, sorted by date,
-          with an extra 'year' column
+        df: DataFrame with one row per international match, sorted by date,
+            with an extra 'year' column
     """
     try:
         df = pd.read_csv(path)
@@ -55,7 +57,17 @@ def load_results(path="data/results.csv"):
 
 
 def _points(goals_for, goals_against):
-    """Return the number of points earned for one match (3/1/0)."""
+    """
+    Description:
+        Return the number of points earned for one match (3/1/0).
+
+    Arguments:
+        goals_for: number of goals scored by the team
+        goals_against: number of goals scored by the opponent
+
+    Returns:
+        points: points earned for the match
+    """
     if goals_for > goals_against:
         return 3
     if goals_for == goals_against:
@@ -64,21 +76,23 @@ def _points(goals_for, goals_against):
 
 
 def add_recent_form(df, window=10, min_matches=5):
-    """Add each team's recent form (computed BEFORE the match) to every row.
+    """
+    Description:
+        Add each team's recent form, computed before the match, to every row.
 
-    For both teams of each match, computes the average points, goals scored
-    and goals conceded over their last `window` matches. Rows where a team
-    has played fewer than `min_matches` past matches are filled with NaN.
+        For both teams of each match, compute the average points, goals scored
+        and goals conceded over their last `window` matches. Rows where a team
+        has played fewer than `min_matches` past matches are filled with NaN.
 
     Arguments:
-    df -- match DataFrame, sorted by date
-    window -- number of past matches used to compute the form
-    min_matches -- minimum history required, otherwise NaN
+        df: match DataFrame, sorted by date
+        window: number of past matches used to compute the form
+        min_matches: minimum history required, otherwise NaN
 
     Returns:
-    df -- copy of the input with 6 new columns:
-          home_avg_points, home_avg_goals_scored, home_avg_goals_conceded,
-          away_avg_points, away_avg_goals_scored, away_avg_goals_conceded
+        df: copy of the input with six new columns:
+            home_avg_points, home_avg_goals_scored, home_avg_goals_conceded,
+            away_avg_points, away_avg_goals_scored, away_avg_goals_conceded
     """
     history = defaultdict(lambda: deque(maxlen=window))
     new_columns = []
@@ -104,15 +118,18 @@ def add_recent_form(df, window=10, min_matches=5):
 
 
 def get_current_form(df, team, window=10):
-    """Compute a team's current form from its most recent matches.
+    """
+    Description:
+        Compute a team's current form from its most recent matches.
 
     Arguments:
-    df -- match DataFrame, sorted by date
-    team -- team name, e.g. 'France'
-    window -- number of most recent matches to use
+        df: match DataFrame, sorted by date
+        team: team name, e.g. 'France'
+        window: number of most recent matches to use
 
     Returns:
-    form -- dict with keys 'avg_points', 'avg_goals_scored', 'avg_goals_conceded'
+        form: dictionary with the keys 'avg_points', 'avg_goals_scored',
+            and 'avg_goals_conceded'
     """
     mask = (df["home_team"] == team) | (df["away_team"] == team)
     last_matches = df[mask].tail(window)
@@ -138,16 +155,27 @@ def get_current_form(df, team, window=10):
 
 
 def team_label(team):
-    """Return the team name with its flag emoji, e.g. '🇫🇷 France'."""
+    """
+    Description:
+        Return the team name with its flag emoji, e.g. '🇫🇷 France'.
+
+    Arguments:
+        team: team name
+
+    Returns:
+        label: team name preceded by its flag emoji
+    """
     return f"{FLAGS.get(team, '🏳️')} {team}"
 
 
 def print_round(round_name, match_results):
-    """Pretty-print one round of the tournament.
+    """
+    Description:
+        Pretty-print one round of the tournament.
 
     Arguments:
-    round_name -- name of the round, e.g. 'Quarts de finale'
-    match_results -- list of tuples (team_a, team_b, winner, win_probability)
+        round_name: name of the round, e.g. 'Quarts de finale'
+        match_results: list of tuples (team_a, team_b, winner, win_probability)
     """
     print(f"\n{'=' * 60}")
     print(f"  {round_name.upper()}")
@@ -158,7 +186,13 @@ def print_round(round_name, match_results):
 
 
 def print_champion(team):
-    """Pretty-print the tournament winner."""
+    """
+    Description:
+        Pretty-print the tournament winner.
+
+    Arguments:
+        team: name of the tournament winner
+    """
     print(f"\n{'*' * 60}")
-    print(f"   🏆 CHAMPION DU MONDE 2030 : {team_label(team).upper()} 🏆")
+    print(f"   🏆 CHAMPION DU MONDE 2026 : {team_label(team).upper()} 🏆")
     print("*" * 60)
